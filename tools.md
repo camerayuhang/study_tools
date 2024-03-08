@@ -20,6 +20,10 @@ conda update --all
 
 ## WSL如何翻墙
 
+WSL翻墙一般使用windows的翻墙，
+> 更多参考:[在 WSL2 中使用 Clash for Windows 代理连接_
+](https://eastmonster.github.io/2022/10/05/clash-config-in-wsl/)
+
 ### 方法一
 
 使用WSL2的最新特性，在 `C:\Users\<UserName>\.wslconfig` 文件中 (如果不存在就手动创建一个) 加入以下内容:
@@ -34,7 +38,7 @@ autoProxy=true
 
 ### 方法二
 
-clash for windows中要allow alan，即允许局域网连接，同时记住端口号，一般是7890，
+翻墙软件要允许局域网连接allow alan，同时记住端口号，clash for windows是7890，
 
 ![](./images/clash%20for%20windows.png)
 
@@ -48,7 +52,7 @@ autoProxy=false
 ```
 配置文件更改后需要重启wsl
 
-这个不会强制让WSL使用Windows的代理，WSL会是一台独立的电脑，ip与windows不一样
+这个不会强制让WSL使用Windows的代理，WSL会是一台独立的电脑，ip与windows不一样，这样就还能保证ssh远程连接wsl
 
 编辑wsl中的`./bashrc`文件，如果使用zsh终端，应该编辑`./zshrc`，加入
 
@@ -63,6 +67,10 @@ export https_proxy="http://$host_ip:[端口]"
 ```
 source ./bashrc
 ```
+
+还有关键的一步，windows的防火墙要允许翻墙软件通讯，clash for winodws和clash-win64都设置
+
+![](./images/firewall.png)
 
 再终端输入如下命令，进行验证，没有wget可以先安装
 
