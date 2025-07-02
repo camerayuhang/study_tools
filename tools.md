@@ -18,12 +18,83 @@ conda update --all
 
 ## 通过 ssh 远程连接 WSL
 
+### 在 WSL 安装 ssh 服务
+
+```bash
+sudo pacman -S openssh
+```
+
+### systemctl 设置自动启动
+
+```bash
+sudo systemctl enable sshd
+```
+
+还有这些命令启动，查看状态，关闭 ssh
+
+```bash
+sudo systemctl start sshd
+sudo systemctl status sshd
+sudo systemctl stop sshd
+```
+
+### 设置 wsl 中的 ssh 端口号为 2222
+
+ssh 端口号一般为 22，为了不和 windows 的 ssh 端口号冲突，所以 wsl 中 ssh 端口号设置为 2222
+
+编辑`/etc/ssh/sshd_config`文件，找到以下行
+
+```bash
+Port 2222
+#AddressFamily any
+ListenAddress 0.0.0.0
+#ListenAddress ::
+```
+
+设置完可能需要重启一下 wsl
+
+### 在 windows 添加 portproxy 规则
+
+```powershell
+netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=2222 connectaddress=[your wsl address] connectport=2222
+```
+
+You can list all your portproxy rules like this if you're concerned:
+
+```powershell
+netsh interface portproxy show v4tov4
+```
+
+You can remove them all if you want with
+
+```powershell
+netsh int portproxy reset all
+```
+
+### 其他电脑配置 ssh
+
+```
+Host wyh.4090.WslArchlinux
+  HostName 10.191.53.56
+  User yuhang
+  Port 2222
+```
+
+注意，这里的 ip 地址应该是安装 wsl 的 windows 的 ip 地址
+
+### 添加端口转发
+
+在 windows 的 powershell 中输入以下命令，添加端口转发规则
+
+```powershell
+netsh advfirewall firewall add rule name=”Open Port 2222 for WSL2” dir=in action=allow protocol=TCP localport=2222
+```
+
 ## WSL 如何翻墙
 
 WSL 翻墙一般使用 windows 的翻墙，
 
-> 更多参考:[在 WSL2 中使用 Clash for Windows 代理连接\_
-> ](https://eastmonster.github.io/2022/10/05/clash-config-in-wsl/)
+> 更多参考:[在 WSL2 中使用 Clash for Windows 代理连接\_ > ](https://eastmonster.github.io/2022/10/05/clash-config-in-wsl/)
 
 ### 方法一
 
